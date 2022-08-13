@@ -42,6 +42,8 @@ module.exports = {
                     .on("noRelated", (queue) => {
                         queue.textChannel.send("No related songs found");
                     })
-                    
+                    .on("initQueue", (queue) => {
+                        queue.autoplay = true;
+                    })
     },
 };

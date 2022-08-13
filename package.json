@@ -9,6 +9,7 @@
     "@discordjs/voice": "^0.11.0",
     "@distube/spotify": "^1.3.2",
     "@distube/yt-dlp": "^1.1.3",
+    "@distube/ytdl-core": "^4.11.4",
     "discord-api-types": "^0.37.1",
     "discord.js": "^14.1.2",
     "distube": "^4.0.3",
