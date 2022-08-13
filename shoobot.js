@@ -2,7 +2,7 @@ const { Client, Collection, GatewayIntentBits, Partials } = require("discord.js"
 const { DisTube } = require("distube")
 const { SpotifyPlugin } = require("@distube/spotify")
 const { YtDlpPlugin } = require('@distube/yt-dlp')
-const { token } = require("./config.json");
+const { token, youtube_cookie } = require("./config.json");
 const { eventLoader } = require("./handlers/event_handler.js");
 const { commandLoader } = require("./handlers/command_handler.js");
 const { slashCommandLoader } = require("./handlers/slashcmnd_handler.js");
@@ -24,6 +24,7 @@ client.distube = new DisTube(client, {
     leaveOnStop: false,
     savePreviousSongs: true,
     nsfw: true,
+    youtubeCookie: youtube_cookie,
     plugins: [
         new SpotifyPlugin(),
         new YtDlpPlugin()
