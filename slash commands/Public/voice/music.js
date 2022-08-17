@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType } = require("discord.js");
 const client = require("../../../shoobot");
+const { links } = require("../../../utils/queueImages");
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -237,13 +239,14 @@ module.exports = {
 					break;
 
 				case "queue":
-					const currentQueue = currentSongs;
+					const currentQueue = await client.distube.getQueue(musicChannel);
 					// await interaction.editReply({ content: 'Current queue:\n' + queue.songs.map((song, id) =>
 					// 	`**${id + 1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
 					// ).join("\n")});
 					const mappedQueue = currentQueue.songs.map((song, id) => [`💜` + `\u1CBC` + `**${(id + 1)}**.` + ` \u200B [${song.name}](${song.url}) - \`${song.formattedDuration}\``]);
 					const queueArray = Array.from(mappedQueue);
-					const image = null;
+					const queueStatus = `Volume: ${currentQueue.volume}% \u1CBC|\u1CBC Loop: ${ currentQueue.repeatMode ? (currentQueue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off' } \u1CBC|\u1CBC Autoplay: ${currentQueue.autoplay ? 'On' : 'Off'}`
+
 					const forward = new ButtonBuilder()
 						.setCustomId("forward")
 						.setLabel("▶")
@@ -260,12 +263,14 @@ module.exports = {
 						while (myArray.length) {
 							const chunk = myArray.splice(0, chunk_size);
 							const chunkString = chunk.join("\n");
+							const imageIndex = Math.floor(Math.random() * links.length);
+							const queueImage = links[imageIndex];
 							const embed = new EmbedBuilder()
 								.setDescription(
 									chunkString + "\n\n" +
 									"·.★·.·´¯·.·★ /ᐠ｡ꞈ｡ᐟ\\\\★·.·´¯·.·★.·\n━━━  Have an ok day  ━━━")
 								.setColor(10758886)
-								.setImage("https://cdn.discordapp.com/attachments/682468880676815036/1008118796688572447/purple.gif");
+								.setImage(queueImage);
 							results.push(embed);
 						}
 
@@ -281,7 +286,7 @@ module.exports = {
 						content: "╔════════ılılıll|llılıl════════╗\n"
 			       			   + "**Playlist Queue**\n".padStart(50, ' \u200B ')
 			      			   + "╚════♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪════╝",
-						embeds: [result[0].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}`})],
+						embeds: [result[0].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
 						components: [new ActionRowBuilder().addComponents(back.setDisabled(true), forward)]
 					});
 
@@ -296,7 +301,7 @@ module.exports = {
 
 								if ((currentPage + 1) === embedArrayLen) {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),
@@ -305,7 +310,7 @@ module.exports = {
 									});
 								} else {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),
@@ -318,7 +323,7 @@ module.exports = {
 
 								if ((currentPage) === 0) {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + '\u1CBC'.repeat(10) + queueStatus}`})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(true).setStyle(ButtonStyle.Secondary),
@@ -327,7 +332,7 @@ module.exports = {
 									});
 								} else {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + '\u1CBC'.repeat(10) + queueStatus}`})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),
