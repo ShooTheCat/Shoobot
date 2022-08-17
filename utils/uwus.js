@@ -94,6 +94,8 @@ const uwuSix = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢷⣀⠀⠀⣀⣴⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 `
 
-const uwuASCII = [uwuOne, uwuTwo, uwuThree, uwuFour, uwuFive, uwuSix];
+const uwuSeven = `ฅ^•ﻌ•^ฅ`;
+
+const uwuASCII = [ uwuOne, uwuTwo, uwuThree, uwuFour, uwuFive, uwuSix, uwuSeven ];
 
 module.exports = { uwuASCII }
