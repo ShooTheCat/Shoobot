@@ -6,3 +6,6 @@ test.js
 
 # Ignore the node_modules directory
 /node_modules
+
+# Ignroe the .zip of the dir
+shoobot.zip
