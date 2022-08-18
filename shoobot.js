@@ -12,9 +12,18 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildVoiceStates
-    ]});
+    ],
+    partials: [
+        Partials.Message,
+        Partials.Reaction,
+        Partials.Channel
+    ]
+});
 
 client.commands = new Collection();
 client.slashcommands = new Collection();

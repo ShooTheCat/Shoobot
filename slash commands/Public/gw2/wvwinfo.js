@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { fetch } = require("undici");
-const worldnames = require('../../../utils/editedworldnames.js');
+const { worldNames } = require('../../../utils/editedworldnames.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,8 +20,9 @@ module.exports = {
             fetch(worldsurl, settings)
                 .then(response => response.json())
                 .then((worlds) => {
-                    if (worldName in worldnames) {
+                    if (worldNames.includes(worldName)) {
                         const worldId = getId(worldName);
+
                         // const worldColor = getColor();
 
                         function getId(worldName) {

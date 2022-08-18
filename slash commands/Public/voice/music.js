@@ -243,10 +243,12 @@ module.exports = {
 					// await interaction.editReply({ content: 'Current queue:\n' + queue.songs.map((song, id) =>
 					// 	`**${id + 1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
 					// ).join("\n")});
-					const mappedQueue = currentQueue.songs.map((song, id) => [`💜` + `\u1CBC` + `**${(id + 1)}**.` + ` \u200B [${song.name}](${song.url}) - \`${song.formattedDuration}\``]);
+					const mappedQueue = currentQueue.songs.map((song, id) => [`💜` + ` \u200B ` + `**${(id + 1)}**.` + ` \u200B [${song.name}](${song.url}) - \`${song.formattedDuration}\``]);
 					const queueArray = Array.from(mappedQueue);
-					const queueStatus = `Volume: ${currentQueue.volume}% \u1CBC|\u1CBC Loop: ${ currentQueue.repeatMode ? (currentQueue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off' } \u1CBC|\u1CBC Autoplay: ${currentQueue.autoplay ? 'On' : 'Off'}`
-
+					const queueStatus = `Volume: ${currentQueue.volume}%  \u200B | \u200B  Loop: ${ currentQueue.repeatMode ? (currentQueue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off' }  \u200B | \u200B  Autoplay: ${currentQueue.autoplay ? 'On' : 'Off'}`
+					const imageIndex = Math.floor(Math.random() * links.length);
+					const queueImage = links[imageIndex];
+					
 					const forward = new ButtonBuilder()
 						.setCustomId("forward")
 						.setLabel("▶")
@@ -263,8 +265,6 @@ module.exports = {
 						while (myArray.length) {
 							const chunk = myArray.splice(0, chunk_size);
 							const chunkString = chunk.join("\n");
-							const imageIndex = Math.floor(Math.random() * links.length);
-							const queueImage = links[imageIndex];
 							const embed = new EmbedBuilder()
 								.setDescription(
 									chunkString + "\n\n" +
@@ -286,7 +286,7 @@ module.exports = {
 						content: "╔════════ılılıll|llılıl════════╗\n"
 			       			   + "**Playlist Queue**\n".padStart(50, ' \u200B ')
 			      			   + "╚════♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪════╝",
-						embeds: [result[0].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
+						embeds: [result[0].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + ' \u200B '.repeat(10) + queueStatus})],
 						components: [new ActionRowBuilder().addComponents(back.setDisabled(true), forward)]
 					});
 
@@ -301,7 +301,7 @@ module.exports = {
 
 								if ((currentPage + 1) === embedArrayLen) {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + ' \u200B '.repeat(10) + queueStatus})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),
@@ -310,7 +310,7 @@ module.exports = {
 									});
 								} else {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + '\u1CBC'.repeat(10) + queueStatus})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen}` + ' \u200B '.repeat(10) + queueStatus})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),
@@ -323,7 +323,7 @@ module.exports = {
 
 								if ((currentPage) === 0) {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + '\u1CBC'.repeat(10) + queueStatus}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + ' \u200B '.repeat(10) + queueStatus}`})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(true).setStyle(ButtonStyle.Secondary),
@@ -332,7 +332,7 @@ module.exports = {
 									});
 								} else {
 									return i.update({
-										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + '\u1CBC'.repeat(10) + queueStatus}`})],
+										embeds: [result[currentPage].setFooter({text: `Page ${currentPage + 1}/${embedArrayLen + ' \u200B '.repeat(10) + queueStatus}`})],
 										components: [
 											new ActionRowBuilder().addComponents(
 												back.setDisabled(false).setStyle(ButtonStyle.Success),

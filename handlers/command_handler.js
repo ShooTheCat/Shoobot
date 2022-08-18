@@ -13,5 +13,5 @@ module.exports = {
             await client.commands.set(command.name, command);
         };
         console.log(`Loaded ${(client.commands).size} out of ${commandFiles.length} commands.`);
-    },
+    },  
 };

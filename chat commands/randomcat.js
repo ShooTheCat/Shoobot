@@ -13,12 +13,15 @@ module.exports = {
 			const jsonResponse = await response.json();
             const picture = jsonResponse["file"];
 			await message.channel.send(picture);
+			return;
 		} else if (backupResponse.status === 200) {
 			const jsonResponse = await backupResponse.json();
             const picture = jsonResponse[0]["url"];
 			await message.channel.send(picture);
+			return;
 		} else {
             await message.channel.send("Internet says: No cats for you :(")
+			return;
         }
 
 	},
