@@ -1,9 +1,9 @@
 const { EmbedBuilder, Embed } = require("discord.js");
+const { distube } = require("../shoobot");
 
 module.exports = {
     async musicEventLoader(client) {
         // const queue = client.distube.queue;
-        
         client.distube.removeAllListeners();
 
         client.distube
@@ -36,8 +36,12 @@ module.exports = {
                         queue.textChannel.send(`Added \`${playlist.name}\` playlist (${playlist.songs.length} songs) to the queue!`);
                     })
                     .on("error", (channel, error) => {
-                        if (channel) channel.send(`An error encountered: ${error}`)
-                        else console.error(error);
+                        if (channel) {
+                            channel.send(`An error encountered: ${error}`);
+                            client.distube.voices.leave(channel);
+                        } else {
+                            console.error(error);
+                        }
                     })
                     .on("noRelated", (queue) => {
                         queue.textChannel.send("No related songs found");
