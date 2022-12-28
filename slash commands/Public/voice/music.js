@@ -41,6 +41,10 @@ module.exports = {
 						.setRequired(true)))
 		.addSubcommand(subcommand =>
 			subcommand
+				.setName("leave")
+				.setDescription("Leave the channel"))
+		.addSubcommand(subcommand =>
+			subcommand
 				.setName("pause")
 				.setDescription("Pause the current song"))
 		.addSubcommand(subcommand =>
@@ -133,6 +137,12 @@ module.exports = {
 
 					await interaction.editReply({ content: "\u200B" });
 					break;
+				
+				case "leave":
+					const chatChannel = interaction.channel
+					client.distube.voices.emit("error", chatChannel,"PlayError");
+
+					break;
 
 				case "search":
 					//Get search results
@@ -155,9 +165,6 @@ module.exports = {
 							})
 
 					await interaction.editReply({ embeds: [searchEmbed] });
-					// await interaction.editReply(`**Choose an option from below**\n${
-					// 	searchResult.map((song, i) => `**${i + 1}**. ${song.name} - \`${song.formattedDuration}\``).join("\n")
-					// }\n\nPick the song you want to play\n*Enter anything else or wait 60 seconds to cancel*`);
 
 					//Wait for user to pick the song
 					const channel = interaction.channel;
@@ -240,9 +247,6 @@ module.exports = {
 
 				case "queue":
 					const currentQueue = await client.distube.getQueue(musicChannel);
-					// await interaction.editReply({ content: 'Current queue:\n' + queue.songs.map((song, id) =>
-					// 	`**${id + 1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
-					// ).join("\n")});
 					const mappedQueue = currentQueue.songs.map((song, id) => [`💜` + ` \u200B ` + `**${(id + 1)}**.` + ` \u200B [${song.name}](${song.url}) - \`${song.formattedDuration}\``]);
 					const queueArray = Array.from(mappedQueue);
 					const queueStatus = `Volume: ${currentQueue.volume}%  \u200B | \u200B  Loop: ${ currentQueue.repeatMode ? (currentQueue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off' }  \u200B | \u200B  Autoplay: ${currentQueue.autoplay ? 'On' : 'Off'}`
@@ -438,8 +442,6 @@ module.exports = {
 							})
 
 					await interaction.editReply({ embeds: [playingEmbed] });
-
-					// await interaction.editReply({ content: `Currently playing: [${currentSong.name}](${currentSong.url}) - ${currentSong.formattedDuration}` });
 					break;
 
 				case "autoplay":
