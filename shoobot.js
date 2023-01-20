@@ -7,6 +7,7 @@ const { eventLoader } = require("./handlers/event_handler.js");
 const { commandLoader } = require("./handlers/command_handler.js");
 const { slashCommandLoader } = require("./handlers/slashcmnd_handler.js");
 const { musicEventLoader } = require("./handlers/music_event_handler.js");
+const { UtilLoader } = require('./handlers/util_handler.js');
 
 const client = new Client({
     intents: [
@@ -45,5 +46,5 @@ eventLoader(client);
 commandLoader(client);
 slashCommandLoader(client);
 musicEventLoader(client);
-
+UtilLoader(client);
 client.login(token);
