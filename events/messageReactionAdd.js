@@ -20,6 +20,7 @@ module.exports = {
                 case '1018873593989443694':
                     const wvw = reaction.message.guild.roles.cache.find((role) => role.name == 'WvW');
                     const pve = reaction.message.guild.roles.cache.find((role) => role.name == 'PvE');
+                    const pvp = reaction.message.guild.roles.cache.find((role) => role.name == 'PvP');
 
                     if (!wvw || !pve) return;
 
@@ -30,25 +31,9 @@ module.exports = {
                     if ((reaction.emoji.name === '🟠')) {
                         member.roles.add(pve);
                     }
-                    break;
 
-                case '1003355134966906901':
-                    const lottery = reaction.message.guild.roles.cache.find((role) => role.name == 'Lottery');
-
-                    if (!lottery) return;
-
-                    if (reaction.emoji.name === '🪙') {
-                        member.roles.add(lottery);
-                    }
-                    break;
-
-                case '1018909398183186482':
-                    const test = reaction.message.guild.roles.cache.find((role) => role.name == 'test');
-
-                    if (!test) return;
-
-                    if (reaction.emoji.name === '🟣') {
-                        member.roles.add(test);
+                    if ((reaction.emoji.name === '🟢')) {
+                        member.roles.add(pvp);
                     }
                     break;
 
@@ -57,6 +42,8 @@ module.exports = {
                     const mgs = reaction.message.guild.roles.cache.find((role) => role.name == 'MGS');
                     const cf = reaction.message.guild.roles.cache.find((role) => role.name == 'CF');
                     const hide = reaction.message.guild.roles.cache.find((role) => role.name == 'HiDe');
+                    // const ip = reaction.message.guild.roles.cache.find((role) => role.name == 'iP');
+                    const guest = reaction.message.guild.roles.cache.find((role) => role.name == 'Guest');
 
                     if (!ok || !mgs || !cf || !hide) return;
 
@@ -75,6 +62,14 @@ module.exports = {
                     if (reaction.emoji.name === '🔵') {
                         member.roles.add(hide);
                     }
+
+                    if (reaction.emoji.name === '⚪') {
+                        member.roles.add(guest);
+                    }
+
+                    // if (reaction.emoji.name === '🟠') {
+                    //     member.roles.add(ip);
+                    // }
                     break;
 
                 default:
