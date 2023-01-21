@@ -132,7 +132,7 @@ module.exports = {
                     });
 
                     tierCollector.on('end', (collected) => {
-                        interaction.channel.send({ content: 'Buttons expired', ephemeral: true })
+                        interaction.followUp({ content: 'Buttons expired', ephemeral: true })
                     });
 
                     break;
@@ -213,7 +213,7 @@ module.exports = {
                         })
 
                         serverCollector.on('end', (collected) => {
-                            interaction.channel.send({ content: 'Selection expired', ephemeral: true })
+                            interaction.followUp({ content: 'Selection expired', ephemeral: true })
                         });
 
                     } else {
