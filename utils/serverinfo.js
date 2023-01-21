@@ -21,6 +21,7 @@ module.exports = {
             const sJson = await response.json();
 
             const sinfo = {
+                tier: sJson['id'].slice(2),
                 endTime: new Date(sJson['end_time']).getTime() / 1000,
                 skirmishes: sJson['skirmishes'],
                 servColour: GetServColour(servId),
@@ -159,23 +160,34 @@ module.exports = {
                     if (skirms[i]['scores'][colour] != min && skirms[i]['scores'][colour] != max) second++;
 
                 };
+                return [first, second, last]
             };
 
+            const embedColour = () => {
+                if (sinfo['servColour'] == 'red') {
+                    return 12454410;
+                } else if (sinfo['servColour'] == 'blue') {
+                    return 2197732;
+                } else {
+                    return 184871;
+                }
+            }
+
             const serverInfoEmbed = {
-                color: 16777215,
+                color: embedColour(),
                 title: 'WvW Server Info',
-                description: `**Region**: ${(region == 2) ? 'Europe 🇪🇺' : 'North America 🇺🇸'}\n**Tier**: ${tierId}\n**Skirmishes Played**: ${sinfo['skirmishes'].length}\n**Skirmishes Left**: ${84 - sinfo['skirmishes'].length}\n**Next Reset**: <t:${sinfo['endTime']}:R>`,
+                description: `**Tier**: ${sinfo['tier']}⠀**Server Colour**: ${sinfo['servColour'].charAt(0).toUpperCase() + sinfo['servColour'].slice(1)}⠀**Placement**: ${sinfo.server()['placement']}\n**Skirmishes Played**: ${sinfo['skirmishes'].length}⠀**Skirmishes Left**: ${84 - sinfo['skirmishes'].length}\n**Next Reset**: <t:${sinfo['endTime']}:R>`,
                 thumbnail: {
                     url: "https://wiki.guildwars2.com/images/d/db/WvW_Instructor.png",
                 },
                 fields: [
                     {
-                        name: '+========================================+\n' + 'Skirmish Info'.padStart(84, ' \u200B ') + '\n+========================================+',
-                        value: `**Skirmishes Played**: ${skirmishList.length} \u200B \u200B \u200B \u200B**Skirmishes Left**: ${84 - skirmishList.length}`
+                        name: 'Skirmish Info',
+                        value: `**PPT**: ${sinfo.server().curPPT()}⠀**Current Score**: ${sinfo.server()['curScore']}\n**SM**: ${(sinfo.server()['eternalBorder']['stoneMist'][0] == 1) ? "✅" : "❌"}` 
                             + "```"
                             + "\n V.P.  🥇First  🥈Second  🥉Last"
                             + "\n-----------------------------------\n"
-                            + ` ${victoryPoints[colour.toLowerCase()]}`.padStart(3).padEnd(10) + `${first}`.padEnd(10) + `${second}`.padStart(2).padEnd(10) + `${last}`.padStart(2)
+                            + `${sinfo.server()['victoryPoints'].toString().padStart(3).padEnd(10)}` + `${sinfo.server()['skirmPlacements'][0]}`.padEnd(10) + `${sinfo.server()['skirmPlacements'][1]}`.padStart(2).padEnd(10) + `${sinfo.server()['skirmPlacements'][2]}`.padStart(2)
                             + "\n```"
                     },
                     {
@@ -184,14 +196,14 @@ module.exports = {
                             "```"
                             + "\n  ⠀ ⠀   EBG     Red     Blue   Green    Total"
                             + "\n----------------------------------------------"
-                            + "\nScore".padEnd(8) + `${sinfo[server]['eternalBorder']['score']}`.padEnd(8) + `${sinfo[server]['redBorder']['score']}`.padEnd(8) + `${sinfo[server]['blueBorder']['score']}`.padEnd(8) + `${sinfo[server]['greenBorder']['score']}`.padEnd(8) + `${sinfo[server]['totalScore']}`
-                            + "\nKills".padEnd(8) + `${sinfo[server]['eternalBorder']['kills']}`.padEnd(8) + `${sinfo[server]['redBorder']['kills']}`.padEnd(8) + `${sinfo[server]['blueBorder']['kills']}`.padEnd(8) + `${sinfo[server]['greenBorder']['kills']}`.padEnd(8) + `${sinfo[server]['kills']}`
-                            + "\nDeaths".padEnd(8) + `${sinfo[server]['eternalBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['redBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['blueBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['greenBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['deaths']}`
-                            + "\nK/D".padEnd(8) + `${sinfo[server]['eternalBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['redBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['blueBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['greenBorder'].kdratio()}`.padEnd(8) + `${sinfo[server].kdratio()}`
-                            + "\nCamps".padEnd(8) + `${sinfo[server]['eternalBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server].camps()}`
-                            + "\nTowers".padEnd(8) + `${sinfo[server]['eternalBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server].towers()}`
-                            + "\nKeeps".padEnd(8) + `${sinfo[server]['eternalBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server].keeps()}`
-                            + "\nPPT".padEnd(8) + `${sinfo[server]['eternalBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['redBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['blueBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['greenBorder'].ppt()}`.padEnd(8) + `${sinfo[server].curPPT()}`
+                            + "\nScore".padEnd(8) + `${sinfo.server()['eternalBorder']['score']}`.padEnd(8) + `${sinfo.server()['redBorder']['score']}`.padEnd(8) + `${sinfo.server()['blueBorder']['score']}`.padEnd(8) + `${sinfo.server()['greenBorder']['score']}`.padEnd(8) + `${sinfo.server()['totalScore']}`
+                            + "\nKills".padEnd(8) + `${sinfo.server()['eternalBorder']['kills']}`.padEnd(8) + `${sinfo.server()['redBorder']['kills']}`.padEnd(8) + `${sinfo.server()['blueBorder']['kills']}`.padEnd(8) + `${sinfo.server()['greenBorder']['kills']}`.padEnd(8) + `${sinfo.server()['kills']}`
+                            + "\nDeaths".padEnd(8) + `${sinfo.server()['eternalBorder']['deaths']}`.padEnd(8) + `${sinfo.server()['redBorder']['deaths']}`.padEnd(8) + `${sinfo.server()['blueBorder']['deaths']}`.padEnd(8) + `${sinfo.server()['greenBorder']['deaths']}`.padEnd(8) + `${sinfo.server()['deaths']}`
+                            + "\nK/D".padEnd(8) + `${sinfo.server()['eternalBorder'].kdratio()}`.padEnd(8) + `${sinfo.server()['redBorder'].kdratio()}`.padEnd(8) + `${sinfo.server()['blueBorder'].kdratio()}`.padEnd(8) + `${sinfo.server()['greenBorder'].kdratio()}`.padEnd(8) + `${sinfo.server().kdratio()}`
+                            + "\nCamps".padEnd(8) + `${sinfo.server()['eternalBorder']['camps'][0]}`.padEnd(8) + `${sinfo.server()['redBorder']['camps'][0]}`.padEnd(8) + `${sinfo.server()['blueBorder']['camps'][0]}`.padEnd(8) + `${sinfo.server()['greenBorder']['camps'][0]}`.padEnd(8) + `${sinfo.server().camps()}`
+                            + "\nTowers".padEnd(8) + `${sinfo.server()['eternalBorder']['towers'][0]}`.padEnd(8) + `${sinfo.server()['redBorder']['towers'][0]}`.padEnd(8) + `${sinfo.server()['blueBorder']['towers'][0]}`.padEnd(8) + `${sinfo.server()['greenBorder']['towers'][0]}`.padEnd(8) + `${sinfo.server().towers()}`
+                            + "\nKeeps".padEnd(8) + `${sinfo.server()['eternalBorder']['keeps'][0]}`.padEnd(8) + `${sinfo.server()['redBorder']['keeps'][0]}`.padEnd(8) + `${sinfo.server()['blueBorder']['keeps'][0]}`.padEnd(8) + `${sinfo.server()['greenBorder']['keeps'][0]}`.padEnd(8) + `${sinfo.server().keeps()}`
+                            + "\nPPT".padEnd(8) + `${sinfo.server()['eternalBorder'].ppt()}`.padEnd(8) + `${sinfo.server()['redBorder'].ppt()}`.padEnd(8) + `${sinfo.server()['blueBorder'].ppt()}`.padEnd(8) + `${sinfo.server()['greenBorder'].ppt()}`.padEnd(8) + `${sinfo.server().curPPT()}`
                             + "\n```"
                     }
                 ],
@@ -200,60 +212,9 @@ module.exports = {
                     icon_url: 'https://i.imgur.com/UUdiAwg.png',
                 },
             };
-
-            const embeds = [serverInfoEmbed];
-
-            function MakeEmbed(server) {
-                const embedOptions = () => {
-                    if (server == 'redServ') {
-                        return [12454410, "https://wiki.guildwars2.com/images/4/40/Commander_tag_%28red%29.png"];
-                    } else if (server == 'blueServ') {
-                        return [2197732, "https://wiki.guildwars2.com/images/5/54/Commander_tag_%28blue%29.png"]
-                    } else {
-                        return [184871, "https://wiki.guildwars2.com/images/5/5e/Commander_tag_%28green%29.png"]
-                    }
-                }
-                const serverEmbed = {
-                    color: embedOptions()[0],
-                    title: `${sinfo[server]['mainWorld']}`,
-                    description: `**Victory Points**: ${sinfo[server]['victoryPoints']}⠀**PPT**: ${sinfo[server].curPPT()}⠀**Current Score**: ${sinfo[server]['curScore']}\n**K/D**: ${sinfo[server].kdratio()}⠀**Kills**: ${sinfo[server]['kills']}⠀**Deaths**: ${sinfo[server]['deaths']}\n**SM**: ${(sinfo[server]['eternalBorder']['stoneMist'][0] == 1) ? "✅" : "❌"}`,
-                    thumbnail: {
-                        url: embedOptions()[1],
-                    },
-                    fields: [
-                        {
-                            name: 'General Info',
-                            value:
-                                "```"
-                                + "\n  ⠀ ⠀   EBG     Red     Blue   Green    Total"
-                                + "\n----------------------------------------------"
-                                + "\nScore".padEnd(8) + `${sinfo[server]['eternalBorder']['score']}`.padEnd(8) + `${sinfo[server]['redBorder']['score']}`.padEnd(8) + `${sinfo[server]['blueBorder']['score']}`.padEnd(8) + `${sinfo[server]['greenBorder']['score']}`.padEnd(8) + `${sinfo[server]['totalScore']}`
-                                + "\nKills".padEnd(8) + `${sinfo[server]['eternalBorder']['kills']}`.padEnd(8) + `${sinfo[server]['redBorder']['kills']}`.padEnd(8) + `${sinfo[server]['blueBorder']['kills']}`.padEnd(8) + `${sinfo[server]['greenBorder']['kills']}`.padEnd(8) + `${sinfo[server]['kills']}`
-                                + "\nDeaths".padEnd(8) + `${sinfo[server]['eternalBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['redBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['blueBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['greenBorder']['deaths']}`.padEnd(8) + `${sinfo[server]['deaths']}`
-                                + "\nK/D".padEnd(8) + `${sinfo[server]['eternalBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['redBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['blueBorder'].kdratio()}`.padEnd(8) + `${sinfo[server]['greenBorder'].kdratio()}`.padEnd(8) + `${sinfo[server].kdratio()}`
-                                + "\nCamps".padEnd(8) + `${sinfo[server]['eternalBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['camps'][0]}`.padEnd(8) + `${sinfo[server].camps()}`
-                                + "\nTowers".padEnd(8) + `${sinfo[server]['eternalBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['towers'][0]}`.padEnd(8) + `${sinfo[server].towers()}`
-                                + "\nKeeps".padEnd(8) + `${sinfo[server]['eternalBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['redBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['blueBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server]['greenBorder']['keeps'][0]}`.padEnd(8) + `${sinfo[server].keeps()}`
-                                + "\nPPT".padEnd(8) + `${sinfo[server]['eternalBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['redBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['blueBorder'].ppt()}`.padEnd(8) + `${sinfo[server]['greenBorder'].ppt()}`.padEnd(8) + `${sinfo[server].curPPT()}`
-                                + "\n```"
-                        }
-                    ],
-                    timestamp: new Date(),
-                    footer: {
-                        icon_url: 'https://i.imgur.com/UUdiAwg.png',
-                    },
-                }
-                embeds.push(serverEmbed);
-            };
-
-            ['redServ', 'blueServ', 'greenServ'].forEach(MakeEmbed);
-
-            return embeds;
+            return serverInfoEmbed;
         } catch (error) {
-            console.log(error)
-        }
-
-
-
+            console.log(error);
+        };
     }
-}
+};

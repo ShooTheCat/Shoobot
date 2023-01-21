@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType } = require("discord.js");
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle, ComponentType } = require("discord.js");
 const wait = require('node:timers/promises').setTimeout;
 const { worldNames } = require('../../../utils/editedworldnames');
 const { ServerInfo } = require('../../../utils/serverinfo');
@@ -98,31 +98,31 @@ module.exports = {
                     const tierId = interaction.options.getInteger('tier');
                     const tierInfo = await TierInfo(tierRegion, tierId);
 
-                    const row = new ActionRowBuilder();
+                    const tierBRow = new ActionRowBuilder();
 
-                    const buttonAmount = (region == 2) ? 5 : 4;
+                    const buttonAmount = (tierRegion == 2) ? 5 : 4;
 
                     for (let i = 0; i < buttonAmount; i++) {
                         const tButton = new ButtonBuilder()
                             .setCustomId(`${i + 1}`)
                             .setLabel(`${i + 1}`)
                             .setStyle(ButtonStyle.Primary)
-                        row.addComponents(tButton);
+                        tierBRow.addComponents(tButton);
                     };
 
                     const sendTierInfo = await interaction.editReply({
                         embeds: tierInfo,
-                        components: [row]
+                        components: [tierBRow]
                     });
 
                     const tierCollector = sendTierInfo.createMessageComponentCollector({ componentType: ComponentType.Button, time: 180000 });
 
                     tierCollector.on('collect', async (i) => {
                         if (i.user.id === interaction.user.id) {
-                            const updateTierInfo = await TierInfo(region, i.customId);
+                            const updateTierInfo = await TierInfo(tierRegion, i.customId);
                             await i.update({
                                 embeds: updateTierInfo,
-                                components: [row]
+                                components: [tierBRow]
                             });
                             await wait(2000);
 
@@ -132,7 +132,7 @@ module.exports = {
                     });
 
                     tierCollector.on('end', (collected) => {
-                        interaction.channel.send({ content: 'Buttons expiered', ephemeral: true })
+                        interaction.channel.send({ content: 'Buttons expired', ephemeral: true })
                     });
 
                     break;
@@ -141,7 +141,81 @@ module.exports = {
                     const serverRegion = interaction.options.getSubcommandGroup();
                     const serverName = interaction.options.getString('name');
                     if (worldNames[serverRegion].includes(serverName)) {
-                        ServerInfo(serverName);
+                        const serverInfo = await ServerInfo(serverName);
+
+                        const servSelectRow = new ActionRowBuilder();
+                        const choices = worldNames[serverRegion];
+                        const selectMenuOptions = [];
+
+                        for (let i = 0; i < choices.length; i++) {
+                            const selectMenuOption = {
+                                label: choices[i],
+                                value: choices[i]
+                            };
+                            selectMenuOptions.push(selectMenuOption);
+
+                        };
+
+                        const selectRows = [];
+
+                        if (serverRegion == 'eu') {
+                            const servSelectRow2 = new ActionRowBuilder();
+                            const selectMenuTwoOptions = selectMenuOptions.slice(-13);
+
+                            servSelectRow
+                                .addComponents(
+                                    new StringSelectMenuBuilder()
+                                        .setCustomId('server-select')
+                                        .setPlaceholder('EU servers #1')
+                                        .addOptions(selectMenuOptions.slice(0, 14))
+                                );
+                            servSelectRow2
+                                .addComponents(
+                                    new StringSelectMenuBuilder()
+                                        .setCustomId('server-select2')
+                                        .setPlaceholder('EU servers #2')
+                                        .addOptions(selectMenuTwoOptions)
+                                );
+
+                            selectRows.push(servSelectRow)
+                            selectRows.push(servSelectRow2)
+                        } else {
+                            servSelectRow
+                                .addComponents(
+                                    new StringSelectMenuBuilder()
+                                        .setCustomId('server-select')
+                                        .setPlaceholder('NA servers')
+                                        .addOptions(selectMenuOptions)
+                                );
+                            selectRows.push(servSelectRow)
+                        };
+
+                        const sendServerInfo = await interaction.editReply({
+                            embeds: [serverInfo],
+                            components: selectRows
+                        });
+
+                        const serverCollector = sendServerInfo.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180000 });
+
+                        serverCollector.on('collect', async (i) => {
+                            if (i.user.id === interaction.user.id) {
+                                const newServer = i.values[0];
+                                const updateServInfo = await ServerInfo(newServer);
+                                await i.update({
+                                    embeds: [updateServInfo],
+                                    components: selectRows
+                                });
+                                await wait(2000);
+
+                            } else {
+                                i.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+                            };
+                        })
+
+                        serverCollector.on('end', (collected) => {
+                            interaction.channel.send({ content: 'Selection expired', ephemeral: true })
+                        });
+
                     } else {
                         interaction.editReply(`${serverName} is not a valid world!`)
                     }
